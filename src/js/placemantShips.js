@@ -16,6 +16,7 @@ const  createShip = (el) =>{
 export const shipsGeneration = () => {
 
     let matrixField = createMatrix();
+    let ships = [];
 
     let lengthShips = [4,3,3,2,2,2,1,1,1,1];
 
@@ -24,8 +25,11 @@ export const shipsGeneration = () => {
             do {
                 newShip = createShip(lengthShips[i]);
             }while(!checkShip(newShip, matrixField));
-
+            ships.push(newShip);
         }
+
+
+        return ships;
 }
 
 
@@ -74,17 +78,14 @@ const checkShip = (ship, matrixField) => {
                 }
             }
 
-
             //проверка на окружение
             for (let y = ship.y - 1; y <= ship.y + ship.size * dy + dx; y++) {
                 for (let x = ship.x - 1; x <= ship.x + ship.size * dx + dy; x++) {
-                    console.log(y,x);
                     if (isValidCoordinates(x, y) && matrixField[y][x] !== 0) {
                         return false;
                     }
                 }
             }
-
 
             for (let i = 0; i < ship.size; i++) {
                 matrixField[ship.y + i * dy][ship.x + i * dx] = 1;
