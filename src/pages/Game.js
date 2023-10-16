@@ -1,10 +1,14 @@
 import { useEffect, useState} from 'react';
+import { useRef } from 'react';
 import PlayingField from "../components/PlayingField";
 import "../css/game.css"
 import {useDispatch, useSelector} from "react-redux";
-import {addNewShip} from "../js/placemantShips"
+import {addNewShip, shipsGeneration} from "../js/placemantShips"
 import Ship from "../components/Ship";
-import {changeShipCoord} from "../store/playersReducer";
+import {addShot, changeShipCoord, generatePlayerShips} from "../store/playersReducer";
+import shot from "../components/Shot";
+import {newShoot} from "../js/shots";
+import Shot from "../components/Shot";
 
 function Game() {
 
@@ -15,9 +19,14 @@ function Game() {
 
     const userName = useSelector(state => state.score.userName);
     const playerShips = useSelector(state => state.players.playerShips);
+    const botShips = useSelector(state => state.players.botShips);
+    const score = useSelector(state => state.score.scorePlay);
+    const playerShots = useSelector(state => state.players.playerShots);
     const dispatch = useDispatch();
 
     const [currentShip, setCurrentShip] = useState(null);
+    const startBtnRef = useRef(null);
+    const shotBtnRef = useRef(null);
 
     function dragOverHandler(event){
         event.preventDefault();
@@ -26,11 +35,6 @@ function Game() {
 
     function dragLeaveHandler(event){
         currentShip.style.opacity = '1';
-    }
-
-
-    function dragEndHandler(event){
-
     }
 
     function dragStartHandler(event){
@@ -54,17 +58,18 @@ function Game() {
         currentShip.style.opacity = '1';
     }
 
-    /*function setDirection(event){
+    function startGame() {
+        startBtnRef.current.textContent = "Сдаться";
+        shotBtnRef.current.style.pointerEvents = "auto";
+    }
 
-            if (event.target.dataset.direction === "row"){
-                event.target.dataset.direction = "column";
-                event.target.classList.add('img-rotation');
-            } else {
-                event.target.dataset.direction = "row";
-                event.target.classList.remove('img-rotation');
-            }
 
-    }*/
+    function setShot(event) {
+        let shot = newShoot(event.target.dataset.x,event.target.dataset.y, playerShots, botShips);
+        if (shot){
+            dispatch(addShot(shot));
+        }
+    }
 
     return (
         <main className="game">
@@ -76,7 +81,6 @@ function Game() {
                     <div className="all_ships"
                          onDragLeave={(event) => dragLeaveHandler(event)}
                          onDragStart={(event) => dragStartHandler(event)}
-                         onDragEnd={(event) => dragEndHandler(event)}
                          draggable={true}
                     >
                         {playerShips.map(ship => {
@@ -85,11 +89,19 @@ function Game() {
                     </div>
                 </div>
                 <div className="info">
-                    <div>{userName}</div>
-                    <button disabled>Начать игру</button>
+                    <h2>{userName}</h2>
+                    <div>Score: {score}</div>
+                    <button  ref={startBtnRef} disabled={!(playerShips.every(ship => ship.x !== -1))}
+                             onClick={startGame} >Начать игру</button>
                 </div>
-                <div className="opponent">
+                <div className="opponent" ref={shotBtnRef}
+                onClick={event => setShot(event)}>
                     <PlayingField />
+                    {playerShots.map(shot =>{
+                        return (
+                            <Shot props={shot}/>
+                        )
+                    })}
                 </div>
             </div>
 
