@@ -15,9 +15,12 @@ const defaultState = {
         {id:"9",x:-1,y:-1,size:3,direction:"row",name:"three_deck"},
         {id:"10",x:-1,y:-1,size:4,direction:"row",name:"four_deck"}
     ],
+    playerShots:[],
 }
 
 const CHANGE_COORD = "CHANGE_COORD";
+const SET_SHIPS = "SET_SHIPS";
+const ADD_SHOT = "ADD_SHOT";
 export const playersReducer = (state=defaultState, action) => {
     switch (action.type) {
         case CHANGE_COORD:
@@ -28,9 +31,15 @@ export const playersReducer = (state=defaultState, action) => {
                     }
                     return ship;
                 } ) }
+        case SET_SHIPS:
+            return { ...state, playerShips: action.payload}
+        case ADD_SHOT:
+            return { ...state, playerShots: [...state.playerShots, action.payload]}
         default:
             return state
     }
 }
 
 export  const changeShipCoord = (payload) => ({type:CHANGE_COORD, payload});
+export const  generatePlayerShips = (payload) => ({type:SET_SHIPS, payload});
+export const addShot = (payload) => ({type:ADD_SHOT, payload});
