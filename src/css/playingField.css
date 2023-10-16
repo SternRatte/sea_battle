@@ -1,0 +1,28 @@
+.cell{
+    background-color: rgba(245, 255, 250,0.9);
+    margin: 2px;
+    width: 40px;
+    height: 40px;
+}
+
+.row{
+    display: flex;
+}
+
+
+.marker-column{
+    display: flex;
+    text-align: center;
+    margin-left: 20px;
+}
+
+.column{
+    width: 40px;
+    margin: 0 2px;
+    text-align: center;
+}
+
+.marker-row{
+    font-size: 20px;
+    margin: 10px auto;
+}

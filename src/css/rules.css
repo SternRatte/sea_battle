@@ -1,0 +1,22 @@
+.rules_container{
+    background: url("../../src/img/bg-map.jpg") no-repeat center center;
+    background-size: cover;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.rules_container h1{
+   text-align: center;
+    margin-bottom: 15px;
+    text-decoration: black 3px solid underline;
+}
+
+.rules_container p{
+    text-align: justify;
+    font-size: 25px;
+    font-weight: bold;
+    width: 80%;
+    margin: 0 auto;
+    text-shadow: 1px 1px 0px rgba(255, 255, 255, 1),
+    3px 2px 0px rgba(0, 0, 0, 0.15);
+}

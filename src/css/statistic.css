@@ -1,0 +1,13 @@
+.statistic_container{
+    margin: 10% auto;
+    max-width: 30%;
+    background:rgba(224, 255, 255,0.8);
+    text-align: center;
+    padding: 20px;
+    border-radius: 20px;
+}
+
+.statistic_container h1{
+    margin-bottom: 20px;
+    text-decoration: black 2px underline; ;
+}

@@ -1,0 +1,48 @@
+.ship{
+    background-color: #FFE4B5;
+    margin: 5px 2px;
+    height: 40px;
+    cursor: grab;
+    z-index: 2;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+}
+
+.ship:active{
+    cursor:grabbing;
+}
+
+
+.one_deck{
+    width: 40px;
+    background: url("../../src/img/img_15.png")  center center;
+    background-size: cover;
+}
+
+.two_deck{
+    width: 80px;
+    background: url("../../src/img/img_13.png")  center center;
+    background-size: cover;
+}
+
+.three_deck{
+    width: 120px;
+    background: url("../../src/img/img_12.png")  center center;
+    background-size: cover;
+}
+
+.four_deck{
+    width: 160px;
+    background: url("../../src/img/img_5.png")  center center;
+    background-size: cover;
+}
+
+.shipsLine{
+    display: flex;
+    max-width: 600px;
+}
+
+.all_ships{
+
+}
