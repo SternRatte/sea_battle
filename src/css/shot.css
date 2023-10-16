@@ -1,0 +1,9 @@
+.missed{
+    background-color: black;
+    position: absolute;
+}
+
+.hit{
+   background-color: red;
+    position: absolute;
+}
