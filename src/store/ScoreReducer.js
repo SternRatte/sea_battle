@@ -3,12 +3,12 @@ const defaultState = {
     gamesCount: 0,
     win:0,
     lose:0,
-    scorePlay:0,
 }
 
 const SET_NAME = "SET_NAME"
 const ADD_WIN = "ADD_WIN"
 const ADD_LOSE = "ADD_LOSE"
+
 
 export const ScoreReducer = (state=defaultState, action) => {
     switch (action.type) {
@@ -24,5 +24,5 @@ export const ScoreReducer = (state=defaultState, action) => {
 }
 
 export const setName= (payload) => ({type:SET_NAME, payload});
-export const addWin= (payload) => ({type:ADD_WIN, payload});
-export const addLose= (payload) => ({type:ADD_LOSE, payload});
+export const addWin= () => ({type:ADD_WIN});
+export const addLose= () => ({type:ADD_LOSE});
