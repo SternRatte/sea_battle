@@ -19,8 +19,8 @@ const Ship = ({props}) => {
     if (x !== -1){
         style= {
             position:"absolute",
-            left: `${x * 44 + 22}px`,
-            top: `${y * 44 + 35}px`,
+            left: `${x * 44 + 20}px`,
+            top: `${y * 44 + 18}px`,
         }
     }
 
