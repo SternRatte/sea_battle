@@ -24,6 +24,8 @@ function Game() {
     const botShots = useSelector(state => state.players.botShots);
     const dispatch = useDispatch();
 
+    console.log(botShips);
+
     const [currentShip, setCurrentShip] = useState(null);
     const [statusTurn, setStatusTurn] = useState(null);
     const [score, setScore] = useState(0);
@@ -65,6 +67,11 @@ function Game() {
             }
         }
         currentShip.style.opacity = '1';
+    }
+
+    function setRandomShips(){
+        let playerShip = shipsGeneration();
+        dispatch(generatePlayerShips(playerShip));
     }
 
     function lose(){
@@ -149,6 +156,7 @@ function Game() {
                     <h2>{userName}</h2>
                     <h3>{statusTurn}</h3>
                     <div>Score: {score}</div>
+                    <button onClick={setRandomShips}>Выставить рандомно</button>
                     <button  ref={startBtnRef} disabled={!(playerShips.every(ship => ship.x !== -1))}
                              onClick={startGame} >Начать игру</button>
                 </div>

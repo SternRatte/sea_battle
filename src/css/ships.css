@@ -13,7 +13,6 @@
     cursor:grabbing;
 }
 
-
 .one_deck{
     width: 40px;
     background: url("../../src/img/img_15.png")  center center;
@@ -43,6 +42,7 @@
     max-width: 600px;
 }
 
-.all_ships{
-
+.column {
+    transform: rotate(90deg);
+    transform-origin: 20px 20px;
 }

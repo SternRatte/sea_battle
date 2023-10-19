@@ -10,6 +10,20 @@ const generateRandomCoord = () => {
 const  createShip = (el) =>{
     let ship = generateRandomCoord();
     ship.size= el;
+    switch (el){
+        case 4:
+            ship.name = "four_deck";
+            break
+        case 3:
+            ship.name = "three_deck";
+            break
+        case 2:
+            ship.name = "two_deck";
+            break
+        case 1:
+            ship.name = "one_deck";
+            break
+    }
     return ship;
 }
 
