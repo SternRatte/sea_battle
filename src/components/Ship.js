@@ -20,7 +20,7 @@ const Ship = ({props}) => {
         style= {
             position:"absolute",
             left: `${x * 44 + 22}px`,
-            top: `${y * 44 + 20}px`,
+            top: `${y * 44 + 35}px`,
         }
     }
 
