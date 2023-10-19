@@ -28,7 +28,6 @@ export const shipsGeneration = () => {
             ships.push(newShip);
         }
 
-
         return ships;
 }
 
@@ -78,7 +77,6 @@ const checkShip = (ship, matrixField) => {
                 }
             }
 
-            //проверка на окружение
             for (let y = ship.y - 1; y <= ship.y + ship.size * dy + dx; y++) {
                 for (let x = ship.x - 1; x <= ship.x + ship.size * dx + dy; x++) {
                     if (isValidCoordinates(x, y) && matrixField[y][x] !== 0) {
