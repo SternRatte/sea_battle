@@ -8,8 +8,8 @@ const Shot = ({props}) => {
     const style= {
         width: `40px`,
         height: `40px`,
-        left: `${x * 44 + 21}px`,
-        top: `${y * 44 +20}px`,
+        left: `${x * 44 + 22}px`,
+        top: `${y * 44 + 20}px`,
     }
 
     return(
