@@ -75,10 +75,10 @@ function Game() {
     }
 
     function lose(){
-        if (botScore == 20) {
+        if (botScore === 20) {
             dispatch(addLose());
             return "Ты проиграл битву";
-        }else if (score == 20){
+        }else if (score === 20){
             dispatch(addWin());
             return "Победа в сражении!";
         }else

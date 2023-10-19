@@ -14,7 +14,7 @@ const PlayingField = () => {
         <div className='field'>
             <div className="marker-column">
                 {
-                    alph.map(letter => <div className="column">{letter}</div>)
+                    alph.map(letter => <div className="column-cell">{letter}</div>)
                 }
             </div>
 
