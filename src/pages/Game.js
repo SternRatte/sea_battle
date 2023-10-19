@@ -5,10 +5,11 @@ import "../css/game.css"
 import {useDispatch, useSelector} from "react-redux";
 import {addNewShip, shipsGeneration} from "../js/placemantShips"
 import Ship from "../components/Ship";
-import {addShot, changeShipCoord, generatePlayerShips} from "../store/playersReducer";
-import shot from "../components/Shot";
-import {newShoot} from "../js/shots";
+import {addBotShot, addShot, changeShipCoord, generatePlayerShips} from "../store/playersReducer";
+import {generateBotShot, newShoot} from "../js/shots";
 import Shot from "../components/Shot";
+import {addLose, addWin} from "../store/ScoreReducer";
+
 
 function Game() {
 
@@ -16,17 +17,21 @@ function Game() {
         document.title = "Forward to victory!"
     },[])
 
-
     const userName = useSelector(state => state.score.userName);
     const playerShips = useSelector(state => state.players.playerShips);
     const botShips = useSelector(state => state.players.botShips);
-    const score = useSelector(state => state.score.scorePlay);
     const playerShots = useSelector(state => state.players.playerShots);
+    const botShots = useSelector(state => state.players.botShots);
     const dispatch = useDispatch();
 
     const [currentShip, setCurrentShip] = useState(null);
+    const [statusTurn, setStatusTurn] = useState(null);
+    const [score, setScore] = useState(0);
+    const [botScore, setBotScore] = useState(0);
+
     const startBtnRef = useRef(null);
     const shotBtnRef = useRef(null);
+    let playerTurn = Math.random() >= 0.5;
 
     function dragOverHandler(event){
         event.preventDefault();
@@ -34,6 +39,10 @@ function Game() {
     }
 
     function dragLeaveHandler(event){
+        currentShip.style.opacity = '1';
+    }
+
+    function dragEnd(event){
         currentShip.style.opacity = '1';
     }
 
@@ -58,16 +67,58 @@ function Game() {
         currentShip.style.opacity = '1';
     }
 
+    function lose(){
+        if (botScore == 20) {
+            dispatch(addLose());
+            return "Ты проиграл битву";
+        }else if (score == 20){
+            dispatch(addWin());
+            return "Победа в сражении!";
+        }else
+            return false;
+    }
     function startGame() {
-        startBtnRef.current.textContent = "Сдаться";
-        shotBtnRef.current.style.pointerEvents = "auto";
+            startBtnRef.current.textContent = "Сдаться";
+            newTurn();
     }
 
+    function newTurn() {
+        let endGame = lose();
+        if (endGame){
+            setStatusTurn(endGame);
+            return;
+        }
+        if (playerTurn) {
+            setStatusTurn("Твой ход");
+            shotBtnRef.current.style.pointerEvents = "auto";
+        } else {
+            setStatusTurn("Ход соперника");
+            shotBtnRef.current.style.pointerEvents = "none";
+            setTimeout(startBot, 3000);
+        }
+    }
+    function startBot() {
+        let {x,y} = generateBotShot(botShots);
+        let {newShots, hitCount,} = newShoot(x,y, botShots, playerShips);
+        if (hitCount){
+            setBotScore((botScore) => botScore + hitCount);
+        }
+        if (newShots){
+            dispatch(addBotShot(newShots));
+            playerTurn = true;
+            newTurn();
+        }
+    }
 
     function setShot(event) {
-        let shot = newShoot(event.target.dataset.x,event.target.dataset.y, playerShots, botShips);
-        if (shot){
-            dispatch(addShot(shot));
+        let {newShots,hitCount} = newShoot(event.target.dataset.x,event.target.dataset.y, playerShots, botShips);
+        if (hitCount){
+            setScore((score) => score + hitCount);
+        }
+        if (newShots){
+            dispatch(addShot(newShots));
+            playerTurn = false;
+            newTurn();
         }
     }
 
@@ -78,9 +129,15 @@ function Game() {
                      onDragOver={(event) => dragOverHandler(event)}
                      onDrop={event => dropHandler(event)}>
                     <PlayingField/>
+                    {botShots.map(shot =>{
+                        return (
+                            <Shot props={shot}/>
+                        )
+                    })}
                     <div className="all_ships"
                          onDragLeave={(event) => dragLeaveHandler(event)}
                          onDragStart={(event) => dragStartHandler(event)}
+                         onDragEnd={(event) => dragEnd(event)}
                          draggable={true}
                     >
                         {playerShips.map(ship => {
@@ -90,6 +147,7 @@ function Game() {
                 </div>
                 <div className="info">
                     <h2>{userName}</h2>
+                    <h3>{statusTurn}</h3>
                     <div>Score: {score}</div>
                     <button  ref={startBtnRef} disabled={!(playerShips.every(ship => ship.x !== -1))}
                              onClick={startGame} >Начать игру</button>
