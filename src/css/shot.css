@@ -1,9 +1,10 @@
 .missed{
-    background-color: black;
+    content:url("../img/img.png");
     position: absolute;
 }
 
 .hit{
-   background-color: red;
+    z-index: 3;
+   content: url("../img/hit.png");
     position: absolute;
 }

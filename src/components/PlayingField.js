@@ -14,7 +14,7 @@ const PlayingField = () => {
         <div className='field'>
             <div className="marker-column">
                 {
-                    alph.map(letter => <div className="column-cell">{letter}</div>)
+                    alph.map(letter => <div id={letter} className="column-cell">{letter}</div>)
                 }
             </div>
 
@@ -27,6 +27,7 @@ const PlayingField = () => {
                                 return (
                                     <div
                                         key={indexRow + " " + indexColumn}
+                                        id={indexRow + " " + indexColumn}
                                         name={matrix[indexRow][indexColumn]}
                                         data-x = {indexColumn}
                                         data-y = {indexRow}

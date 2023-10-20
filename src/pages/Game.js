@@ -5,10 +5,10 @@ import "../css/game.css"
 import {useDispatch, useSelector} from "react-redux";
 import {addNewShip, shipsGeneration} from "../js/placemantShips"
 import Ship from "../components/Ship";
-import {addBotShot, addShot, changeShipCoord, generatePlayerShips} from "../store/playersReducer";
+import {addBotShot, addShot, changeShipCoord, generatePlayerShips, resetState} from "../store/playersReducer";
 import {generateBotShot, newShoot} from "../js/shots";
 import Shot from "../components/Shot";
-import {addLose, addWin} from "../store/ScoreReducer";
+import {addBotScore, addLose, addPlayerScore, addWin} from "../store/ScoreReducer";
 
 
 function Game() {
@@ -17,23 +17,56 @@ function Game() {
         document.title = "Forward to victory!"
     },[])
 
+    const [isStart, setStart] = useState(true);
+    const [isGiveUp, setGiveUp] = useState(false);
+
+   useEffect(() => {
+       setStart(JSON.parse(sessionStorage.getItem('isStart')));
+       setGiveUp(JSON.parse(sessionStorage.getItem('isGiveUp')));
+   },[])
+
+    useEffect(() => {
+        sessionStorage.setItem('isStart', JSON.stringify(isStart));
+        sessionStorage.setItem('isGiveUp',JSON.stringify(isGiveUp));
+    }, [isGiveUp, isStart]);
+
+
+    const [playerTurn, setPlayerTurn] = useState(null);
+    const score = useSelector(state => state.score.scorePlayer);
+    const botScore = useSelector(state => state.score.scoreBot);
+
+    useEffect (() => {
+        if (playerTurn !== null) {
+            let endGame = lose();
+            if (endGame) {
+                setStatusTurn(endGame);
+                setPlayerTurn(null);
+                return;
+            }
+            if (playerTurn) {
+                setStatusTurn("Твой ход");
+                shotBtnRef.current.style.pointerEvents = "auto";
+            } else {
+                setStatusTurn("Ход соперника");
+                shotBtnRef.current.style.pointerEvents = "none";
+                setTimeout(startBot, 2000);
+            }
+        }
+
+    }, [playerTurn, botScore, score])
+
     const userName = useSelector(state => state.score.userName);
+    const gameMode = useSelector(state => state.score.gameMode);
     const playerShips = useSelector(state => state.players.playerShips);
     const botShips = useSelector(state => state.players.botShips);
     const playerShots = useSelector(state => state.players.playerShots);
     const botShots = useSelector(state => state.players.botShots);
     const dispatch = useDispatch();
 
-    console.log(botShips);
-
     const [currentShip, setCurrentShip] = useState(null);
     const [statusTurn, setStatusTurn] = useState(null);
-    const [score, setScore] = useState(0);
-    const [botScore, setBotScore] = useState(0);
 
-    const startBtnRef = useRef(null);
     const shotBtnRef = useRef(null);
-    let playerTurn = Math.random() >= 0.5;
 
     function dragOverHandler(event){
         event.preventDefault();
@@ -63,7 +96,6 @@ function Game() {
                 if (addNewShip(playerShips, ship)) {
                     currentShip.style.margin = '0';
                     dispatch(changeShipCoord(ship));
-                    event.target.append(currentShip);
             }
         }
         currentShip.style.opacity = '1';
@@ -77,55 +109,54 @@ function Game() {
     function lose(){
         if (botScore === 20) {
             dispatch(addLose());
+            setGiveUp(false);
             return "Ты проиграл битву";
         }else if (score === 20){
             dispatch(addWin());
+            setGiveUp(false);
             return "Победа в сражении!";
         }else
             return false;
     }
     function startGame() {
-            startBtnRef.current.textContent = "Сдаться";
-            newTurn();
+            setStart(false);
+            setPlayerTurn(Math.random() >= 0.5);
+            setGiveUp(true);
     }
 
-    function newTurn() {
-        let endGame = lose();
-        if (endGame){
-            setStatusTurn(endGame);
-            return;
-        }
-        if (playerTurn) {
-            setStatusTurn("Твой ход");
-            shotBtnRef.current.style.pointerEvents = "auto";
-        } else {
-            setStatusTurn("Ход соперника");
-            shotBtnRef.current.style.pointerEvents = "none";
-            setTimeout(startBot, 3000);
+   function resetGame(){
+        setStatusTurn("");
+        setStart(true);
+        setStatusTurn(null);
+        dispatch(resetState());
+        shotBtnRef.current.style.pointerEvents = "none";
+        dispatch(addPlayerScore(-score));
+        dispatch(addBotScore(-botScore));
+        if (isGiveUp){
+            dispatch(addLose());
+            setGiveUp(false);
         }
     }
+
     function startBot() {
         let {x,y} = generateBotShot(botShots);
-        let {newShots, hitCount,} = newShoot(x,y, botShots, playerShips);
-        if (hitCount){
-            setBotScore((botScore) => botScore + hitCount);
-        }
-        if (newShots){
+        let {newShots} = newShoot(x,y, botShots, playerShips);
+        if (newShots[0].variant === "hit"){ dispatch(addBotScore(1))}
             dispatch(addBotShot(newShots));
-            playerTurn = true;
-            newTurn();
-        }
+            if (gameMode === "Стрельба по очереди" || newShots[0].variant === "missed"){
+                setPlayerTurn(true);
+            }
     }
 
     function setShot(event) {
-        let {newShots,hitCount} = newShoot(event.target.dataset.x,event.target.dataset.y, playerShots, botShips);
-        if (hitCount){
-            setScore((score) => score + hitCount);
-        }
+        let {newShots} = newShoot(event.target.dataset.x,event.target.dataset.y, playerShots, botShips);
         if (newShots){
             dispatch(addShot(newShots));
-            playerTurn = false;
-            newTurn();
+            if (newShots[0].variant === "hit"){ dispatch(addPlayerScore(1))}
+
+            if (gameMode === "Стрельба по очереди" || newShots[0].variant === "missed"){
+                setPlayerTurn(false)
+            }
         }
     }
 
@@ -154,11 +185,14 @@ function Game() {
                 </div>
                 <div className="info">
                     <h2>{userName}</h2>
+                    <h3>Режим: {gameMode}</h3>
                     <h3>{statusTurn}</h3>
                     <div>Score: {score}</div>
-                    <button onClick={setRandomShips}>Выставить рандомно</button>
-                    <button  ref={startBtnRef} disabled={!(playerShips.every(ship => ship.x !== -1))}
-                             onClick={startGame} >Начать игру</button>
+                    {isStart && <button onClick={setRandomShips}>Выставить рандомно</button>}
+                    {isStart && <button disabled={!(playerShips.every(ship => ship.x !== -1))}
+                            onClick={startGame}>Начать игру</button>}
+                    {isGiveUp && <button onClick={resetGame}>Сдаться</button>}
+                    {!isStart && !isGiveUp && <button onClick={resetGame}>Играть ещё раз</button> }
                 </div>
                 <div className="opponent" ref={shotBtnRef}
                 onClick={event => setShot(event)}>
@@ -170,7 +204,6 @@ function Game() {
                     })}
                 </div>
             </div>
-
         </main>
     );
 }

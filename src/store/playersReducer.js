@@ -23,6 +23,7 @@ const CHANGE_COORD = "CHANGE_COORD";
 const SET_SHIPS = "SET_SHIPS";
 const ADD_SHOT = "ADD_SHOT";
 const ADD_BOT_SHOT = "ADD_BOT_SHOT";
+const RESET_ALL ="RESET_ALL";
 export const playersReducer = (state=defaultState, action) => {
     switch (action.type) {
         case CHANGE_COORD:
@@ -30,6 +31,7 @@ export const playersReducer = (state=defaultState, action) => {
                     if (ship.id === action.payload.id) {
                         ship.x = action.payload.x;
                         ship.y = action.payload.y;
+                        ship.direction = action.payload.direction;
                     }
                     return ship;
                 } ) }
@@ -39,6 +41,8 @@ export const playersReducer = (state=defaultState, action) => {
             return { ...state, playerShots: [...state.playerShots, ...action.payload]}
         case ADD_BOT_SHOT:
             return { ...state, botShots: [...state.botShots, ...action.payload]}
+        case RESET_ALL:
+            return defaultState;
         default:
             return state
     }
@@ -48,3 +52,5 @@ export  const changeShipCoord = (payload) => ({type:CHANGE_COORD, payload});
 export const  generatePlayerShips = (payload) => ({type:SET_SHIPS, payload});
 export const addShot = (payload) => ({type:ADD_SHOT, payload});
 export const addBotShot = (payload) => ({type:ADD_BOT_SHOT, payload});
+
+export const resetState = () => ({type:RESET_ALL})

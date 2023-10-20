@@ -8,6 +8,8 @@
 }
 
 .info{
+    display: flex;
+    flex-direction: column;
     background:rgba(224, 255, 255,0.6);
     width: 25%;
     height: 300px;
@@ -15,6 +17,7 @@
     border-radius: 10px;
     margin: 50px auto;
     text-align: center;
+    align-items: center;
 }
 
 .info h2{
@@ -23,8 +26,9 @@
 
 .info button{
     margin-top: 20px;
-    min-width: 100px;
+    max-width: 200px;
     min-height: 35px;
+    padding: 5px;
     border-radius: 5px;
     background: inherit;
     background-color: rgba(0, 0, 139,0.1);

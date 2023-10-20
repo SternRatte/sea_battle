@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 import { useNavigate } from "react-router-dom";
 import "../css/main.css";
 import {useDispatch, useSelector} from "react-redux";
-import {setName} from "../store/ScoreReducer";
+import {setGameMode, setName} from "../store/ScoreReducer";
 function App() {
 
     useEffect(()=>{
@@ -12,6 +12,8 @@ function App() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const userName =  useSelector(state => state.score.userName);
+    const gameMode = useSelector(state => state.score.gameMode)
+
     const handleChange = event => {
         dispatch(setName(event.target.value))
     };
@@ -24,6 +26,10 @@ function App() {
            alert("Поле не может быть пустым!");
         }
     };
+
+    const setMode = event => {
+        dispatch(setGameMode(event.target.value));
+    }
 
     return (
         <main className="App">
@@ -38,12 +44,16 @@ function App() {
                 <div className="radio-g">
                     <input type="radio"
                            name="game_mode"
-                           checked="checked" />
+                           checked="checked"
+                           value="Стрельба по очереди"
+                    onChange={setMode}/>
                     <span>Стрельба по очереди</span>
                 </div>
                 <div className="radio-g">
                     <input type="radio"
-                           name="game_mode"/>
+                           name="game_mode"
+                           onChange={setMode}
+                           value="Стрельба до промаха"/>
                     <span>Стрельба до промаха</span>
                 </div>
                     <button onClick={handleClick}>Начать игру</button>
